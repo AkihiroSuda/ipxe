@@ -1,0 +1,17 @@
+#!ipxe
+# Usage:
+#  $ make bin/ipxe.usb CONFIG=cloud EMBED=config/cloud/gcp.ipxe
+#  $ cat bin/ipxe.usb /dev/zero | dd iflag=fullblock of=/tmp/disk.raw bs=1M count=1024
+#  $ ( cd /tmp; tar Sczvf ipxe-image.tar.gz disk.raw )
+#  $ gsutil cp /tmp/ipxe-image.tar.gz gs://[BUCKET-NAME]
+#  $ gcloud compute images create ipxe --source-uri gs://[BUCKET-NAME]/ipxe-image.tar.gz --description='Boot via the metadata named "user-data"'
+#  $ gcloud compute instances create ipxe01 --image ipxe --metadata-from-file user-data=/tmp/your-custom-boot-script
+#  $ gcloud compute instances start ipxe01
+#  $ gcloud compute instances get-serial-port-output ipxe01
+
+echo GCP - iPXE boot via user-data
+ifstat ||
+dhcp ||
+route ||
+# FIXME: it does not work until "Metadata-Flavor: Google" header is set
+chain -ar http://169.254.169.254/computeMetadata/v1/instance/attributes/user-data
