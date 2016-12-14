@@ -3,7 +3,7 @@
 set -e
 set -x
 
-make bin/ipxe.usb CONFIG=cloud EMBED=config/cloud/shell.ipxe
+make bin/ipxe.usb DEBUG=virtio-net CONFIG=cloud EMBED=config/cloud/shell.ipxe
 cp -f bin/ipxe.usb /tmp/disk.raw
 ( cd /tmp; tar Sczvf ipxe-shell-image.tar.gz disk.raw )
 gsutil cp /tmp/ipxe-shell-image.tar.gz gs://suda-main
